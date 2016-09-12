@@ -2,6 +2,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -320,13 +321,8 @@ int main(void){
 
 	
 	
+	
 
-	cv::VideoCapture cap(1);
-
-	if (!cap.isOpened()){
-		std::cout << "Device cannot open..." << std::endl;
-		return 0;
-	}
 
 	cv::Mat frame;
 	ending::ArrowDetector detector;
