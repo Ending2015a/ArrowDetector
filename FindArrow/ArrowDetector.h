@@ -229,15 +229,25 @@ namespace ending{
 		double vparal;
 		double vacute;
 
+#ifdef __ARROW_DEBUG_MODE___
 	public:
 		cv::Mat DEBUG_img;
+#endif
 
 	private:
 		void threscolor(cv::Mat &image){
 			cv::Mat hsvimage;
 			cv::cvtColor(image, hsvimage, CV_BGR2HSV);
 
-			cv::inRange(hsvimage, _lower, _upper, image);
+			if (_lower[0] <= _upper[0]){
+				cv::inRange(hsvimage, _lower, _upper, image);
+			} else{
+				cv::inRange(hsvimage, _lower, cv::Scalar(179, _upper[1], _upper[2]), image);
+				cv::Mat temp;
+				cv::inRange(hsvimage, cv::Scalar(0, _lower[1], _lower[2]), _upper, temp);
+				cv::bitwise_or(image, temp, image);
+			}
+			
 
 		}
 
@@ -614,6 +624,7 @@ namespace ending{
 			_lower = lower;
 			_upper = upper;
 			if (image.channels() == 3)threscolor(img);
+
 			findArrow(img);
 
 			return arrows.size();

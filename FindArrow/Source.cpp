@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-#define __ARROW_DEBUG_MODE___
+//#define __ARROW_DEBUG_MODE___
 
 #include "Color.h"
 #include "Detector.h"
@@ -22,7 +22,7 @@
 
 
 
-
+/*
 double getNorm(cv::Point v){
 	return sqrt(pow((double)v.x, 2) + pow((double)v.y, 2));
 }
@@ -129,17 +129,7 @@ bool validpoints(cv::Mat &debug, std::vector<double> &angles, std::vector<cv::Po
 	cv::putText(debug, ss.str(), cont[e1], cv::FONT_HERSHEY_SIMPLEX, 0.3, cv::Scalar(255, 0, 255), 1);
 	cv::circle(debug, cont[e1], 2, cv::Scalar(255, 0, 255), 2);
 	cv::circle(debug, cont[e2], 2, cv::Scalar(255, 0, 255), 2);
-	/*
-	ss = std::stringstream();
-
-	ss << "(" << cont[p[0]].x << "," << cont[p[0]].y << ") -> (" << cont[e1].x << "," << cont[e1].y << ")";
-	cv::putText(debug, ss.str(), cont[e1], cv::FONT_HERSHEY_SIMPLEX, 0.3, cv::Scalar(255, 0, 255), 1);
-
-	ss = std::stringstream();
-
-	ss << "(" << cont[p[1]].x << "," << cont[p[1]].y << ") -> (" << cont[e2].x << "," << cont[e2].y << ")";
-	cv::putText(debug, ss.str(), cont[e2], cv::FONT_HERSHEY_SIMPLEX, 0.3, cv::Scalar(255, 0, 255), 1);
-	*/
+	
 
 
 	if (fabs(vvag) < __ValidParallel){
@@ -172,17 +162,7 @@ bool validpoints(cv::Mat &debug, std::vector<double> &angles, std::vector<cv::Po
 	cv::putText(debug, ss.str(), cv::Point((cont[e1].x + cont[e2].x) / 2, (cont[e1].y + cont[e2].y) / 2), cv::FONT_HERSHEY_SIMPLEX, 0.3, cv::Scalar(0, 255, 255), 1);
 	cv::circle(debug, cont[e1], 2, cv::Scalar(0, 255, 255), 2);
 	cv::circle(debug, cont[e2], 2, cv::Scalar(0, 255, 255), 2);
-	/*
-	ss = std::stringstream();
-
-	ss << "(" << cont[p[0]].x << "," << cont[p[0]].y << ") -> (" << cont[e1].x << "," << cont[e1].y << ")";
-	cv::putText(debug, ss.str(), cont[e1], cv::FONT_HERSHEY_SIMPLEX, 0.3, cv::Scalar(0, 255, 255), 1);
-
-	ss = std::stringstream();
-
-	ss << "(" << cont[p[1]].x << "," << cont[p[1]].y << ") -> (" << cont[e2].x << "," << cont[e2].y << ")";
-	cv::putText(debug, ss.str(), cont[e2], cv::FONT_HERSHEY_SIMPLEX, 0.3, cv::Scalar(0, 255, 255), 1);
-	*/
+	
 
 
 	if (fabs(vvag) < __ValidParallel){
@@ -235,28 +215,7 @@ bool validArrow(cv::Mat &result, std::vector<double> &angles, std::vector <cv::P
 	if (maxv.x == 0 && maxv.y == 0)return false;
 
 	cv::circle(result, cont[maxp], 2, cv::Scalar(211, 0, 148), 2);
-	/*
-	if (p[1] - p[0] < 3)return false;
-
-	cv::circle(result, cont[p[0]], 2, cv::Scalar(255, 255, 0), 2);
-	cv::circle(result, cont[p[1]], 2, cv::Scalar(255, 255, 0), 2);
-
-	int ls = p[0]+1, rs = p[1]-1;
-
-	while (1){
-		if (!(angles[ls] < 0 && angles[ls] > -__ValidCorner))ls++;
-		if (ls >= rs)return false;
-		else break;
-	}
-
-	while (1){
-		if (!(angles[rs] < 0 && angles[rs] > -__ValidCorner))rs--;
-		if (rs <= ls)return false;
-		else break;
-	}
-
-	cv::circle(result, cont[ls], 2, cv::Scalar(255, 0, 255), 2);
-	cv::circle(result, cont[rs], 2, cv::Scalar(255, 0, 255), 2);*/
+	
 
 	dir = getAngle(cv::Point(0, 1), maxv);
 	return true;
@@ -350,7 +309,7 @@ cv::Mat detectArrow(cv::Mat &frame){
 	}
 	
 	return result;
-}
+}*/
 
 
 
@@ -358,6 +317,10 @@ cv::Mat detectArrow(cv::Mat &frame){
 
 
 int main(void){
+
+	
+	
+
 	cv::VideoCapture cap(1);
 
 	if (!cap.isOpened()){
@@ -367,6 +330,7 @@ int main(void){
 
 	cv::Mat frame;
 	ending::ArrowDetector detector;
+
 	while (1){
 		cap >> frame;
 
@@ -375,15 +339,18 @@ int main(void){
 			continue;
 		}
 
+		cv::Mat eq;
+		equalize(frame, eq);
 		
-		detector.detect(frame);
+		detector.detect(eq, cv::Scalar(137, 42, 42), cv::Scalar(22, 255, 255));
 		ending::Arrows &arrows = detector.getArrows();
 
 		for (int i = 0; i < arrows.size(); i++){
 			cv::rectangle(frame, arrows[i].getBoundingBox(), cv::Scalar(0, 0, 255), 1);
 		}
 
-		cv::hconcat(frame, detector.DEBUG_img, frame);
+		//cv::hconcat(frame, detector.DEBUG_img, frame);
+		
 		cv::imshow("result", frame);
 
 		int key = cv::waitKey(10);

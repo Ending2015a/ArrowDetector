@@ -177,3 +177,14 @@ cv::Vec3b separate(cv::Vec3b target, cv::Vec3b blend, int mode = 0){
 	}
 	return result;
 }
+
+void equalize(cv::Mat &input, cv::Mat &output){
+	cv::Mat result;
+	cv::cvtColor(input, result, CV_BGR2YCrCb);
+	std::vector<cv::Mat> channels;
+	cv::split(result, channels);
+
+	cv::equalizeHist(channels[0], channels[0]);
+	cv::merge(channels, result);
+	cv::cvtColor(result, output, CV_YCrCb2BGR);
+}
