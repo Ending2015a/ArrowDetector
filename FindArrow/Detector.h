@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
+
 #include "Color.h"
 
 void image_or(cv::Mat &input1, cv::Mat &input2, cv::Mat &output){
@@ -179,13 +181,18 @@ void colorEdgeDetection(cv::Mat &input, cv::Mat &output, bool b = true){
 		cv::cvtColor(inputImage, inputImage, CV_GRAY2BGR);
 	}
 
+	cv::Mat blurImage;
+	if (b)cv::bilateralFilter(inputImage, blurImage, 5, 150, 150);
+	else blurImage = inputImage;
+
 	std::vector<cv::Mat> colorchannels;
-	cv::split(inputImage, colorchannels);
+	cv::split(blurImage, colorchannels);
 
+	
 
-	edgeDetection(colorchannels[0], colorchannels[0], b);
-	edgeDetection(colorchannels[1], colorchannels[1], b);
-	edgeDetection(colorchannels[2], colorchannels[2], b);
+	edgeDetection(colorchannels[0], colorchannels[0], false);
+	edgeDetection(colorchannels[1], colorchannels[1], false);
+	edgeDetection(colorchannels[2], colorchannels[2], false);
 
 
 	cv::bitwise_or(colorchannels[0], colorchannels[1], outputImage);

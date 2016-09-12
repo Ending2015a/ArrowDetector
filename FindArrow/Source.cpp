@@ -9,6 +9,8 @@
 
 #include <cmath>
 
+#define __ARROW_DEBUG_MODE___
+
 #include "Color.h"
 #include "Detector.h"
 #include "ArrowDetector.h"
@@ -273,7 +275,7 @@ cv::Mat detectArrow(cv::Mat &frame){
 
 	//colorEdgeDetection(image, image, true);
 	
-	std::vector<cv::Vec4i> lines;
+	//std::vector<cv::Vec4i> lines;
 
 	std::vector<std::vector<cv::Point> > contours;
 	std::vector<cv::Vec4i> hierarchy;
@@ -331,7 +333,7 @@ cv::Mat detectArrow(cv::Mat &frame){
 		cont.push_back(c);
 	}
 
-	cv::Mat debug = cv::Mat::zeros(image.size(), CV_8UC3);
+	//cv::Mat debug = cv::Mat::zeros(image.size(), CV_8UC3);
 	for (int i = 0; i < cangles.size(); i++){
 		cv::Point center = cv::Point(boundRect[i].x + boundRect[i].width / 2, boundRect[i].y + boundRect[i].height / 2);
 
@@ -353,6 +355,47 @@ cv::Mat detectArrow(cv::Mat &frame){
 
 
 
+
+
+int main(void){
+	cv::VideoCapture cap(1);
+
+	if (!cap.isOpened()){
+		std::cout << "Device cannot open..." << std::endl;
+		return 0;
+	}
+
+	cv::Mat frame;
+	ending::ArrowDetector detector;
+	while (1){
+		cap >> frame;
+
+		if (frame.size().width <= 0 || frame.size().height <= 0){
+			cv::waitKey(10);
+			continue;
+		}
+
+		
+		detector.detect(frame);
+		ending::Arrows &arrows = detector.getArrows();
+
+		for (int i = 0; i < arrows.size(); i++){
+			cv::rectangle(frame, arrows[i].getBoundingBox(), cv::Scalar(0, 0, 255), 1);
+		}
+
+		cv::hconcat(frame, detector.DEBUG_img, frame);
+		cv::imshow("result", frame);
+
+		int key = cv::waitKey(10);
+		if (key == 27)break;
+	}
+
+
+	return 0;
+}
+
+
+/*
 int main(void){
 
 	cv::VideoWriter writer;
@@ -400,4 +443,4 @@ int main(void){
 
 
 	return 0;
-	}
+	}*/
